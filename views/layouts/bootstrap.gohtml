@@ -4,17 +4,21 @@
   <head>
     <title>LensLocked.com</title>
     <link
-      href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
       rel="stylesheet">
   </head>
 <body>
+{{template "navbar"}}
 <div class="container-fluid">
-    {{template "yield" .}}
+<!--The . at the end of this statement is needed to pass the information from the bootstrap 
+template into the content templates-->
+    {{template "content" .}}
+    {{template "footer"}}
 </div>
 <!-- jquery & Bootstrap JS -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
     </script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
     </script>
   </body>
 </html>
