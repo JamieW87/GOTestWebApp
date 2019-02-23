@@ -10,6 +10,7 @@ import (
 //LayoutDir specifies the layout directory and TemplateExt states the extension we want our files to match
 var (
 	LayoutDir   = "views/layouts/"
+	TemplateDir = "views/"
 	TemplateExt = ".gohtml"
 )
 
@@ -23,6 +24,9 @@ type View struct {
 /*This function handles appending common template files to the list of files provided*/
 //Func main calls this function, passes to it the layout (a string) and the files it must load.
 func NewView(layout string, files ...string) *View {
+	//Uses the two functions below to append and prepend file paths and extensions.
+	addTemplatePath(files)
+	addTemplateExt(files)
 	//parses the files in the layout folder as set out in layoutFiles function
 	files = append(files, layoutFiles()...)
 	t, err := template.ParseFiles(files...)
@@ -37,9 +41,12 @@ func NewView(layout string, files ...string) *View {
 }
 
 //Uses the global variables above and returns a slice of a string.
+//Basically a shortener for the layout files.
 func layoutFiles() []string {
-	//States the templates we are going to include in our view, Anything in the layoutDir, with the filename all (*) with
-	//the extension that matches TemplateExt = Basically creates the variable files which equals "views/layouts/*.gohtml"
+	//States the layouts we are going to include in our views (Anything in the layoutDir) with the filename all (*) with
+	//the extension that matches TemplateExt... Basically creates the variable files which equals "views/layouts/*.gohtml"
+	//Globs them together so that we can clean up our code and not have to reference each individual one.
+	//Purely for clean up purposes.
 	files, err := filepath.Glob(LayoutDir + "*" + TemplateExt)
 	if err != nil {
 		panic(err)
@@ -48,7 +55,27 @@ func layoutFiles() []string {
 	return files
 }
 
-//Render method added to the View type (Why the view part comes before the function name)
+//These two functions prepend the file paths and append the extensions for files that are passed into NewView. Simpliyfying our code.
+func addTemplatePath(files []string) {
+	for i, f := range files {
+		files[i] = TemplateDir + f
+	}
+}
+
+func addTemplateExt(files []string) {
+	for i, f := range files {
+		files[i] = f + TemplateExt
+	}
+}
+
 func (v *View) Render(w http.ResponseWriter, data interface{}) error {
+	w.Header().Set("Content-Type", "text/html")
 	return v.Template.ExecuteTemplate(w, v.Layout, data)
+}
+
+//Used to render the pages
+func (v *View) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if err := v.Render(w, nil); err != nil {
+		panic(err)
+	}
 }
