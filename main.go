@@ -1,15 +1,39 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"webapp/controllers"
+	"webapp/models"
 
 	"github.com/gorilla/mux"
 )
 
+//Constants to connect to the database
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "0102"
+	dbname   = "webapp_dev"
+)
+
 func main() {
-	//References the functions that load the views
-	usersC := controllers.NewUsers()
+	//Sets up the connection for the database using the constants above.
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+
+	//Connects to the DB, defers the closing of it until application shutdown and calls the Automigrate function.
+	//NewUserService, Close and Automigrate are all found in the User models file.
+	us, err := models.NewUserService(psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer us.Close()
+	us.AutoMigrate()
+
+	//References the functions that load the views. the (us) is the argument passed when the function is called.
+	usersC := controllers.NewUsers(us)
 	staticC := controllers.NewStatic()
 
 	//Sets up a new router, r.
