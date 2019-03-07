@@ -44,7 +44,9 @@ func main() {
 	r.Handle("/", staticC.Home).Methods("GET")
 	r.Handle("/contact", staticC.Contact).Methods("GET")
 	r.Handle("/faq", staticC.Faq).Methods("GET")
+	r.Handle("/login", usersC.LoginView).Methods("GET")
 	//User pages are handled in the user controller
+	r.HandleFunc("/login", usersC.Login).Methods("POST")
 	r.HandleFunc("/signup", usersC.New).Methods("GET")
 	r.HandleFunc("/signup", usersC.Create).Methods("POST")
 	http.ListenAndServe(":3000", r)
