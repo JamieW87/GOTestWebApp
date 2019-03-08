@@ -40,6 +40,12 @@ func main() {
 	//Tells which func to pass to depending on which route is entered
 	//ListenandServe sets up the server
 	r := mux.NewRouter()
+
+	// Assets
+	//Our asset fileserver
+	assetHandler := http.FileServer(http.Dir("./assets/"))
+	assetHandler = http.StripPrefix("/assets/", assetHandler)
+	r.PathPrefix("/assets/").Handler(assetHandler)
 	//Static pages are handled in the static controller
 	r.Handle("/", staticC.Home).Methods("GET")
 	r.Handle("/contact", staticC.Contact).Methods("GET")
