@@ -11,9 +11,13 @@
 <body>
 {{template "navbar"}}
 <div class="container-fluid">
+<!--If statement that states that IF there is an error, show the alert and the data from the UsersC.New method.-->
+    {{if .Alert}}
+    {{template "alert" .Alert}}
+    {{end}}
 <!--The . at the end of this statement is needed to pass the information from the bootstrap 
 template into the content templates-->
-    {{template "content" .}}
+    {{template "content" .Content}}
     {{template "footer"}}
 </div>
 <!-- jquery & Bootstrap JS -->
