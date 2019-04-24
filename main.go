@@ -31,10 +31,10 @@ func main() {
 	}
 	defer services.Close()
 	services.AutoMigrate()
+	//services.AutoMigrate()
 
 	//Sets up a new router, r.
 	//Tells which func to pass to depending on which route is entered
-	//ListenandServe sets up the server
 	r := mux.NewRouter()
 
 	//References the functions that load the views. the (us) is the argument passed when the function is called.
@@ -67,6 +67,9 @@ func main() {
 	r.Handle("/galleries/new", newGallery).Methods("GET")
 	r.Handle("/galleries", createGallery).Methods("POST")
 	r.HandleFunc("/galleries/{id:[0-9]+}", galleriesC.Show).Methods("GET").Name(controllers.ShowGallery)
+	r.HandleFunc("/galleries/{id:[0-9]+}/edit", requireUserMw.ApplyFn(galleriesC.Edit)).Methods("GET")
+	r.HandleFunc("/galleries/id{id:[0-9]+}/update", requireUserMw.ApplyFn(galleriesC.Update)).Methods("POST")
+	r.HandleFunc("/galleries/{id:[0-9]+}/delete", requireUserMw.ApplyFn(galleriesC.Delete)).Methods("POST")
 	//User pages are handled in the user controller
 	r.HandleFunc("/login", usersC.Login).Methods("POST")
 	r.HandleFunc("/signup", usersC.New).Methods("GET")
